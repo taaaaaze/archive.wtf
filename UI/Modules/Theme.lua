@@ -1,4 +1,3 @@
-local pairs = pairs
 local setmetatable = setmetatable
 local rawget = rawget
 local type = type
@@ -232,7 +231,7 @@ return function(Signal)
 	function Theme.GetThemeNames()
 		local names = {}
 		local n = 0
-		for name in pairs(_themes) do
+			for name in _themes do
 			n += 1
 			names[n] = name
 		end
@@ -331,7 +330,7 @@ return function(Signal)
 	function Theme.GetHighestState(states)
 		local highest = ELEMENT_STATES.Default
 		local highestPri = 0
-		for _, state in pairs(states) do
+		for _, state in states do
 			local pri = STATE_PRIORITY[state] or 0
 			if pri > highestPri then
 				highestPri = pri

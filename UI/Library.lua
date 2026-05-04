@@ -28,14 +28,18 @@ local function Load(path)
 	if isfile then
 		local exists = false
 		local s, r = pcall(isfile, fullLocal)
-		if s then exists = r end
+		if s then
+			exists = r
+		end
 		if exists then
 			local rs, content = pcall(readfile, fullLocal)
 			if rs and content then
 				local ls, module = pcall(loadstring, content)
 				if ls and module then
 					local es, result = pcall(module)
-					if es then return result end
+					if es then
+						return result
+					end
 				end
 			end
 		end
@@ -46,7 +50,9 @@ local function Load(path)
 		local ls, module = pcall(loadstring, source)
 		if ls and module then
 			local es, result = pcall(module)
-			if es then return result end
+			if es then
+				return result
+			end
 		end
 	end
 	return nil
@@ -94,7 +100,9 @@ local function Store(conn)
 end
 
 function Library.Init(config)
-	if _initialized then return Library end
+	if _initialized then
+		return Library
+	end
 	_initialized = true
 
 	config = config or {}
@@ -168,7 +176,9 @@ function Library.Toggle()
 end
 
 function Library.SetOpen(state)
-	if Library.IsOpen == state then return end
+	if Library.IsOpen == state then
+		return
+	end
 	Library.IsOpen = state
 	if _uiRoot then
 		_uiRoot.Enabled = state
@@ -186,11 +196,12 @@ function Library.GetUIRoot()
 	return _uiRoot
 end
 
-function Library.Notify(title, message, duration, notifyType)
-end
+function Library.Notify(title, message, duration, notifyType) end
 
 function Library.Destroy()
-	if not _initialized then return end
+	if not _initialized then
+		return
+	end
 	_initialized = false
 
 	for i = 1, #_connections do
@@ -203,12 +214,22 @@ function Library.Destroy()
 		_renderConnection = nil
 	end
 
-	if Animation then Animation.Destroy() end
-	if Input then Input.Destroy() end
-	if Flags then Flags.Destroy() end
-	if AssetManager then AssetManager.Destroy() end
+	if Animation then
+		Animation.Destroy()
+	end
+	if Input then
+		Input.Destroy()
+	end
+	if Flags then
+		Flags.Destroy()
+	end
+	if AssetManager then
+		AssetManager.Destroy()
+	end
 
-	if Library.OnToggled then Library.OnToggled:Destroy() end
+	if Library.OnToggled then
+		Library.OnToggled:Destroy()
+	end
 	if Library.OnDestroyed then
 		Library.OnDestroyed:Fire()
 		Library.OnDestroyed:Destroy()
