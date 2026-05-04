@@ -83,6 +83,15 @@ Library.Input = Input
 Library.AssetManager = AssetManager
 Library.Animation = Animation
 
+local TabComponentInit = Load("UI/Components/Tab.lua")
+local WindowComponentInit = Load("UI/Components/Window.lua")
+
+local TabComponent = TabComponentInit and TabComponentInit(Library) or nil
+local WindowComponent = WindowComponentInit and WindowComponentInit(Library, TabComponent) or nil
+
+Library.TabComponent = TabComponent
+Library.WindowComponent = WindowComponent
+
 Library.Version = "1.0.0"
 Library.IsOpen = false
 Library.ToggleKey = Enum.KeyCode.RightShift
@@ -121,6 +130,15 @@ function Library.Init(config)
 
 	if AssetManager then
 		AssetManager.Init()
+		
+		if config.UseLucideIcons ~= false then
+			-- Attempt to download lucide font, fallback to standard icon font if fails
+			Library.LucideFont = AssetManager.DownloadFont(
+				"Lucide", 
+				"lucide", 
+				"https://github.com/lucide-icons/lucide/releases/latest/download/lucide.ttf"
+			)
+		end
 	end
 
 	Library.ScreenSize = Environment.GetViewportSize()
@@ -186,6 +204,14 @@ function Library.SetOpen(state)
 	if Library.OnToggled then
 		Library.OnToggled:Fire(state)
 	end
+end
+
+function Library.CreateWindow(options)
+	if not Library.WindowComponent then
+		warn("[archive.wtf] Window component failed to load.")
+		return nil
+	end
+	return Library.WindowComponent.New(options)
 end
 
 function Library.IsInitialized()
