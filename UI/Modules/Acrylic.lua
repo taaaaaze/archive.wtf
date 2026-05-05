@@ -91,8 +91,9 @@ local function LoadAcrylic()
 				end;
 			end)
 
-			local corner0 = frame.AbsolutePosition;
-			local corner1 = corner0 + frame.AbsoluteSize;
+			local inset = 4 -- Inset perfectly to hide sharp glass corners behind the rounded UI
+			local corner0 = frame.AbsolutePosition + Vector2.new(inset, inset);
+			local corner1 = frame.AbsolutePosition + frame.AbsoluteSize - Vector2.new(inset, inset);
 
 			local ray0 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner0.X, corner0.Y, 1);
 			local ray1 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner1.X, corner1.Y, 1);

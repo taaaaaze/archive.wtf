@@ -96,7 +96,7 @@ return function(Library, TabComponent)
 		-- Title Container inside Sidebar
 		local titleContainer = Utilities.CreateInstance("Frame", {
 			Name = "TitleContainer",
-			Size = UDim2.new(1, 0, 0, 40),
+			Size = UDim2.new(1, 0, 0, 45),
 			Position = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
 			Parent = sidebar
@@ -144,7 +144,7 @@ return function(Library, TabComponent)
 			Name = "ActiveTabBackground",
 			Size = UDim2.new(1, 0, 0, 32),
 			Position = UDim2.new(0, 0, 0, 0),
-			BackgroundColor3 = Theme.GetColor("SurfaceHovered"),
+			BackgroundColor3 = Theme.GetColor("SurfaceActive"),
 			BackgroundTransparency = 1, -- Start transparent until a tab is selected
 			BorderSizePixel = 0,
 			ZIndex = 0,
@@ -153,6 +153,14 @@ return function(Library, TabComponent)
 		
 		Utilities.CreateInstance("UICorner", {
 			CornerRadius = UDim.new(0, Theme.GetRounding("Small")),
+			Parent = activeTabBackground
+		})
+
+		local activeTabStroke = Utilities.CreateInstance("UIStroke", {
+			Name = "ActiveTabStroke",
+			Color = Theme.GetColor("Accent"),
+			Transparency = 1, -- Starts transparent
+			Thickness = 1,
 			Parent = activeTabBackground
 		})
 
@@ -190,10 +198,8 @@ return function(Library, TabComponent)
 		titleContainer.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				self.IsDragging = true
-				
-				local mousePos = Vector2.new(input.Position.X, input.Position.Y)
-				local framePos = mainFrame.AbsolutePosition
-				self.DragOffset = mousePos - framePos
+				dragStartPos = mainFrame.Position
+				dragStartInput = Vector2.new(input.Position.X, input.Position.Y)
 			end
 		end)
 
@@ -204,10 +210,11 @@ return function(Library, TabComponent)
 		end)
 
 		InputHandler.OnMouseMoved:Connect(function(pos)
-			if self.IsDragging then
-				mainFrame.Position = UDim2.fromOffset(
-					pos.X - self.DragOffset.X + (mainFrame.Size.X.Offset * mainFrame.AnchorPoint.X),
-					pos.Y - self.DragOffset.Y + (mainFrame.Size.Y.Offset * mainFrame.AnchorPoint.Y)
+			if self.IsDragging and dragStartPos and dragStartInput then
+				local delta = pos - dragStartInput
+				mainFrame.Position = UDim2.new(
+					dragStartPos.X.Scale, dragStartPos.X.Offset + delta.X,
+					dragStartPos.Y.Scale, dragStartPos.Y.Offset + delta.Y
 				)
 			end
 		end)
