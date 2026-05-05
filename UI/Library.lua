@@ -61,6 +61,7 @@ end
 local Environment = Load("UI/Modules/Environment.lua")
 local Utilities = Load("UI/Modules/Utilities.lua")
 local Signal = Load("UI/Modules/Signal.lua")
+local Acrylic = Load("UI/Modules/Acrylic.lua")
 
 local ThemeInit = Load("UI/Modules/Theme.lua")
 local FlagsInit = Load("UI/Modules/Flags.lua")
@@ -82,6 +83,7 @@ Library.Flags = Flags
 Library.Input = Input
 Library.AssetManager = AssetManager
 Library.Animation = Animation
+Library.Acrylic = Acrylic
 
 local TabComponentInit = Load("UI/Components/Tab.lua")
 local WindowComponentInit = Load("UI/Components/Window.lua")

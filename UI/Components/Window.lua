@@ -40,10 +40,14 @@ return function(Library, TabComponent)
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Theme.GetColor("Background"),
-			BackgroundTransparency = Theme.GetTransparency("Background") == 0 and 0.15 or Theme.GetTransparency("Background"),
+			BackgroundTransparency = Theme.GetTransparency("Background") == 0 and 0.3 or Theme.GetTransparency("Background"),
 			BorderSizePixel = 0,
 			Parent = uiRoot
 		})
+		
+		if Library.Acrylic then
+			self.AcrylicEffect = Library.Acrylic.new(mainFrame, false)
+		end
 		
 		Utilities.CreateInstance("UICorner", {
 			CornerRadius = UDim.new(0, Theme.GetRounding("Medium")),
@@ -76,7 +80,8 @@ return function(Library, TabComponent)
 		-- Topbar for dragging
 		local topBar = Utilities.CreateInstance("Frame", {
 			Name = "TopBar",
-			Size = UDim2.new(1, 0, 0, 40),
+			Size = UDim2.new(1, -160, 0, 40),
+			Position = UDim2.fromOffset(160, 0),
 			BackgroundTransparency = 1,
 			Parent = mainFrame
 		})
@@ -97,8 +102,8 @@ return function(Library, TabComponent)
 		-- Sidebar
 		local sidebar = Utilities.CreateInstance("Frame", {
 			Name = "Sidebar",
-			Size = UDim2.new(0, 160, 1, -40),
-			Position = UDim2.fromOffset(0, 40),
+			Size = UDim2.new(0, 150, 1, -10),
+			Position = UDim2.fromOffset(5, 5),
 			BackgroundColor3 = Theme.GetColor("Surface"),
 			BackgroundTransparency = 0.5,
 			BorderSizePixel = 0,
@@ -121,17 +126,40 @@ return function(Library, TabComponent)
 			Parent = sidebar
 		})
 
+		local tabList = Utilities.CreateInstance("Frame", {
+			Name = "TabList",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Parent = tabContainer
+		})
+
 		local tabLayout = Utilities.CreateInstance("UIListLayout", {
 			Padding = UDim.new(0, Theme.GetSpacing("Small")),
 			SortOrder = Enum.SortOrder.LayoutOrder,
+			Parent = tabList
+		})
+		
+		local activeTabBackground = Utilities.CreateInstance("Frame", {
+			Name = "ActiveTabBackground",
+			Size = UDim2.new(1, 0, 0, 32),
+			Position = UDim2.new(0, 0, 0, 0),
+			BackgroundColor3 = Theme.GetColor("SurfaceHovered"),
+			BackgroundTransparency = 1, -- Start transparent until a tab is selected
+			BorderSizePixel = 0,
+			ZIndex = 0,
 			Parent = tabContainer
+		})
+		
+		Utilities.CreateInstance("UICorner", {
+			CornerRadius = UDim.new(0, Theme.GetRounding("Small")),
+			Parent = activeTabBackground
 		})
 
 		-- Content Area
 		local contentArea = Utilities.CreateInstance("Frame", {
 			Name = "ContentArea",
-			Size = UDim2.new(1, -170, 1, -50),
-			Position = UDim2.fromOffset(165, 45),
+			Size = UDim2.new(1, -165, 1, -50),
+			Position = UDim2.fromOffset(160, 45),
 			BackgroundTransparency = 1,
 			Parent = mainFrame
 		})
@@ -141,7 +169,9 @@ return function(Library, TabComponent)
 			TopBar = topBar,
 			Sidebar = sidebar,
 			TabContainer = tabContainer,
+			TabList = tabList,
 			TabLayout = tabLayout,
+			ActiveTabBackground = activeTabBackground,
 			ContentArea = contentArea
 		}
 

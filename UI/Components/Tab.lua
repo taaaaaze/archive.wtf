@@ -24,7 +24,7 @@ return function(Library)
 	end
 
 	function Tab:Build()
-		local tabContainer = self.Window.Elements.TabContainer
+		local tabList = self.Window.Elements.TabList
 		local contentArea = self.Window.Elements.ContentArea
 
 		-- Tab Button
@@ -35,7 +35,7 @@ return function(Library)
 			BackgroundTransparency = 1,
 			Text = "",
 			AutoButtonColor = false,
-			Parent = tabContainer
+			Parent = tabList
 		})
 
 		local corner = Utilities.CreateInstance("UICorner", {
@@ -43,25 +43,10 @@ return function(Library)
 			Parent = button
 		})
 
-		-- Selection indicator (small line on the left)
-		local indicator = Utilities.CreateInstance("Frame", {
-			Name = "Indicator",
-			Size = UDim2.new(0, 3, 0, 0),
-			Position = UDim2.fromScale(0, 0.5),
-			AnchorPoint = Vector2.new(0, 0.5),
-			BackgroundColor3 = Theme.GetColor("Accent"),
-			BorderSizePixel = 0,
-			Parent = button
-		})
-		
-		Utilities.CreateInstance("UICorner", {
-			CornerRadius = UDim.new(1, 0),
-			Parent = indicator
-		})
-
 		-- Title Label
 		local hasIcon = self.Icon ~= nil
 		local textOffset = hasIcon and 30 or 10
+
 
 		local titleLabel = Utilities.CreateInstance("TextLabel", {
 			Name = "Title",
@@ -126,7 +111,6 @@ return function(Library)
 
 		self.Elements = {
 			Button = button,
-			Indicator = indicator,
 			Title = titleLabel,
 			Icon = iconLabel,
 			Content = contentFrame,
@@ -183,17 +167,31 @@ return function(Library)
 
 		local button = self.Elements.Button
 		local title = self.Elements.Title
-		local indicator = self.Elements.Indicator
 		local icon = self.Elements.Icon
 
-		Animation.Tween(button, { BackgroundTransparency = 0.6 }, 0.3)
+		Animation.Tween(button, { BackgroundTransparency = 1 }, 0.3) -- Keep button transparent
 		Animation.Tween(title, { TextColor3 = Theme.GetColor("Text") }, 0.3)
-		Animation.Spring(indicator, { Size = UDim2.new(0, 3, 0, 16) }, 15, 120)
 
 		if icon then
 			local colorProp = icon:IsA("ImageLabel") and "ImageColor3" or "TextColor3"
 			Animation.Tween(icon, { [colorProp] = Theme.GetColor("Text") }, 0.3)
 		end
+		
+		-- Move sliding background
+		local activeBg = self.Window.Elements.ActiveTabBackground
+		local tabList = self.Window.Elements.TabList
+		
+		task.spawn(function()
+			-- Yield slightly to allow UIListLayout to position elements if this is the first frame
+			task.wait()
+			local targetY = button.AbsolutePosition.Y - tabList.AbsolutePosition.Y
+			if activeBg.BackgroundTransparency == 1 then
+				activeBg.Position = UDim2.fromOffset(0, targetY)
+				Animation.Tween(activeBg, { BackgroundTransparency = 0 }, 0.2)
+			else
+				Animation.Spring(activeBg, { Position = UDim2.fromOffset(0, targetY) }, 15, 120)
+			end
+		end)
 	end
 
 	function Tab:Deselect()
@@ -202,12 +200,10 @@ return function(Library)
 
 		local button = self.Elements.Button
 		local title = self.Elements.Title
-		local indicator = self.Elements.Indicator
 		local icon = self.Elements.Icon
 
 		Animation.Tween(button, { BackgroundTransparency = 1 }, 0.3)
 		Animation.Tween(title, { TextColor3 = Theme.GetColor("TextDimmed") }, 0.3)
-		Animation.Spring(indicator, { Size = UDim2.new(0, 3, 0, 0) }, 15, 120)
 
 		if icon then
 			local colorProp = icon:IsA("ImageLabel") and "ImageColor3" or "TextColor3"
