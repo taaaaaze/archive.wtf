@@ -80,10 +80,17 @@ return function(Library, TabComponent)
 		-- Topbar for dragging
 		local topBar = Utilities.CreateInstance("Frame", {
 			Name = "TopBar",
-			Size = UDim2.new(1, -160, 0, 40),
-			Position = UDim2.fromOffset(160, 0),
-			BackgroundTransparency = 1,
+			Size = UDim2.new(1, -165, 0, 40),
+			Position = UDim2.fromOffset(160, 5),
+			BackgroundColor3 = Theme.GetColor("Surface"),
+			BackgroundTransparency = 0.5,
+			BorderSizePixel = 0,
 			Parent = mainFrame
+		})
+
+		Utilities.CreateInstance("UICorner", {
+			CornerRadius = UDim.new(0, Theme.GetRounding("Medium")),
+			Parent = topBar
 		})
 
 		local titleLabel = Utilities.CreateInstance("TextLabel", {
@@ -92,6 +99,7 @@ return function(Library, TabComponent)
 			Position = UDim2.fromOffset(15, 0),
 			BackgroundTransparency = 1,
 			Text = self.Title,
+			RichText = true,
 			TextColor3 = Theme.GetColor("Text"),
 			Font = Theme.GetFont("Bold"),
 			TextSize = Theme.GetTextSize("Header"),
@@ -158,8 +166,8 @@ return function(Library, TabComponent)
 		-- Content Area
 		local contentArea = Utilities.CreateInstance("Frame", {
 			Name = "ContentArea",
-			Size = UDim2.new(1, -165, 1, -50),
-			Position = UDim2.fromOffset(160, 45),
+			Size = UDim2.new(1, -165, 1, -55),
+			Position = UDim2.fromOffset(160, 50),
 			BackgroundTransparency = 1,
 			Parent = mainFrame
 		})

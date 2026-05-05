@@ -9,7 +9,7 @@ Library.Init({
 
 -- Create the main window
 local Window = Library.CreateWindow({
-    Title = "TAURUS",
+    Title = "archive.wtf",
     Size = UDim2.fromOffset(650, 450)
 })
 
@@ -30,4 +30,4 @@ local SettingsTab = Window:CreateTab({
 })
 
 -- Notify the user it loaded successfully
-print("TAURUS UI Base Loaded Successfully")
+print("archive.wtf UI Base Loaded Successfully")
