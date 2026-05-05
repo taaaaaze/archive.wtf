@@ -154,6 +154,7 @@ return function(Signal, Environment)
 			return
 		end
 		_connection = RunService.RenderStepped:Connect(function(dt)
+			dt = clamp(dt, 0, 1/30) -- Clamp dt to prevent physics explosions
 			if _count == 0 then
 				if _connection then
 					_connection:Disconnect()

@@ -107,7 +107,7 @@ return function(Library, TabComponent)
 			Size = UDim2.fromScale(1, 1),
 			Position = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
-			Text = self.Title,
+			Text = "archive.<font color='#00A0FF'>wtf</font>",
 			RichText = true,
 			TextColor3 = Theme.GetColor("Text"),
 			Font = Theme.GetFont("Bold"),
@@ -119,11 +119,12 @@ return function(Library, TabComponent)
 		-- Sidebar content
 		local tabContainer = Utilities.CreateInstance("ScrollingFrame", {
 			Name = "TabContainer",
-			Size = UDim2.new(1, -10, 1, -50),
-			Position = UDim2.fromOffset(5, 45),
+			Size = UDim2.new(1, -10, 1, -55), -- Adjusted size
+			Position = UDim2.fromOffset(5, 50), -- Pushed down slightly
 			BackgroundTransparency = 1,
 			ScrollBarThickness = 0,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
+			ClipsDescendants = true, -- Ensure clipping
 			Parent = sidebar
 		})
 
