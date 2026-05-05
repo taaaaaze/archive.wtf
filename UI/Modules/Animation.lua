@@ -355,6 +355,7 @@ return function(Signal, Environment)
 	end
 
 	function Animation.Tween(object, properties, duration, easingFn)
+		Animation.CancelObject(object)
 		easingFn = easingFn or Easing.OutQuad
 		duration = duration or 0.2
 
@@ -394,8 +395,9 @@ return function(Signal, Environment)
 	end
 
 	function Animation.Spring(object, properties, damping, stiffness)
-		damping = damping or 10
-		stiffness = stiffness or 170
+		Animation.CancelObject(object)
+		damping = damping or 20
+		stiffness = stiffness or 200
 
 		local springProps = {}
 		for propName, target in properties do

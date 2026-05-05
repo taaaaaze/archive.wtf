@@ -99,6 +99,7 @@ return function(Library, TabComponent)
 			Size = UDim2.new(1, 0, 0, 45),
 			Position = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
+			ZIndex = 5,
 			Parent = sidebar
 		})
 
@@ -139,6 +140,12 @@ return function(Library, TabComponent)
 		local tabLayout = Utilities.CreateInstance("UIListLayout", {
 			Padding = UDim.new(0, Theme.GetSpacing("Small")),
 			SortOrder = Enum.SortOrder.LayoutOrder,
+			Parent = tabList
+		})
+
+		Utilities.CreateInstance("UIPadding", {
+			PaddingTop = UDim.new(0, 5),
+			PaddingBottom = UDim.new(0, 5),
 			Parent = tabList
 		})
 		
