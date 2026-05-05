@@ -75,45 +75,64 @@ local function LoadAcrylic()
 			Signal = nil
 		};
 
-		local Update = function()
-			local _,updatec = pcall(function()
-				local userSettings = UserSettings():GetService("UserGameSettings")
-				local qualityLevel = userSettings.SavedQualityLevel.Value
+			-- Cache state to avoid redundant work
+		local lastPos = Vector2.zero
+		local lastSize = Vector2.zero
+		local lastCamCF = CFrame.new()
+		local qualityCheckTimer = 0
+		local INSET = 4
 
-				if qualityLevel < 8 then
-					Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{
-						Transparency = 1;
-					}):Play()
-				else
-					Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{
-						Transparency = 0.8;
-					}):Play()
-				end;
-			end)
+		local Update = function(dt)
+			dt = dt or 0
 
-			local inset = 4 -- Inset perfectly to hide sharp glass corners behind the rounded UI
-			local corner0 = frame.AbsolutePosition + Vector2.new(inset, inset);
-			local corner1 = frame.AbsolutePosition + frame.AbsoluteSize - Vector2.new(inset, inset);
+			-- Only check quality every 2 seconds instead of every frame
+			qualityCheckTimer += dt
+			if qualityCheckTimer >= 2 then
+				qualityCheckTimer = 0
+				pcall(function()
+					local userSettings = UserSettings():GetService("UserGameSettings")
+					local qualityLevel = userSettings.SavedQualityLevel.Value
+					local targetTransparency = qualityLevel < 8 and 1 or 0.8
+					if Part.Transparency ~= targetTransparency then
+						Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{
+							Transparency = targetTransparency;
+						}):Play()
+					end
+				end)
+			end
 
-			local ray0 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner0.X, corner0.Y, 1);
-			local ray1 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner1.X, corner1.Y, 1);
+			-- Skip mesh recalculation if frame hasn't moved or resized and camera is the same
+			local curPos = frame.AbsolutePosition
+			local curSize = frame.AbsoluteSize
+			local camCF = CurrentCamera.CFrame
+			if curPos == lastPos and curSize == lastSize and camCF == lastCamCF then
+				return
+			end
+			lastPos = curPos
+			lastSize = curSize
+			lastCamCF = camCF
 
-			local planeOrigin = CurrentCamera.CFrame.Position + CurrentCamera.CFrame.LookVector * (0.05 - CurrentCamera.NearPlaneZ);
+			local corner0 = curPos + Vector2.new(INSET, INSET);
+			local corner1 = curPos + curSize - Vector2.new(INSET, INSET);
 
-			local planeNormal = CurrentCamera.CFrame.LookVector;
+			local ray0 = CurrentCamera:ScreenPointToRay(corner0.X, corner0.Y, 1);
+			local ray1 = CurrentCamera:ScreenPointToRay(corner1.X, corner1.Y, 1);
 
-			local pos0 = Hiter(planeOrigin, planeNormal, ray0.Origin, ray0.Direction);
-			local pos1 = Hiter(planeOrigin, planeNormal, ray1.Origin, ray1.Direction);
+			local lookVector = camCF.LookVector
+			local planeOrigin = camCF.Position + lookVector * (0.05 - CurrentCamera.NearPlaneZ);
 
-			pos0 = CurrentCamera.CFrame:PointToObjectSpace(pos0);
-			pos1 = CurrentCamera.CFrame:PointToObjectSpace(pos1);
+			local pos0 = Hiter(planeOrigin, lookVector, ray0.Origin, ray0.Direction);
+			local pos1 = Hiter(planeOrigin, lookVector, ray1.Origin, ray1.Direction);
+
+			pos0 = camCF:PointToObjectSpace(pos0);
+			pos1 = camCF:PointToObjectSpace(pos1);
 
 			local size   = pos1 - pos0;
 			local center = (pos0 + pos1) / 2;
 
 			BlockMesh.Offset = center
 			BlockMesh.Scale  = size / 0.0101;
-			Part.CFrame = CurrentCamera.CFrame;
+			Part.CFrame = camCF;
 		end
 
 		C4.Update = Update;

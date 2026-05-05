@@ -183,17 +183,16 @@ return function(Library)
 		local tabList = self.Window.Elements.TabList
 		
 		task.spawn(function()
-			-- Ensure positions are current
 			local targetY = button.AbsolutePosition.Y - tabList.AbsolutePosition.Y
 			
 			if activeBg.BackgroundTransparency == 1 then
 				activeBg.Position = UDim2.fromOffset(5, targetY)
 				Animation.Tween(activeBg, { BackgroundTransparency = 0 }, 0.1)
 				if activeStroke then
-					Animation.Tween(activeStroke, { Transparency = 0 }, 0.1)
+					Animation.Tween(activeStroke, { Transparency = 0.6 }, 0.1)
 				end
 			else
-				Animation.Spring(activeBg, { Position = UDim2.fromOffset(5, targetY) }, 15, 120)
+				Animation.Tween(activeBg, { Position = UDim2.fromOffset(5, targetY) }, 0.12, Animation.Easing.OutQuad)
 			end
 		end)
 	end

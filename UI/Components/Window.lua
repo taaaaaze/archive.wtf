@@ -93,10 +93,10 @@ return function(Library, TabComponent)
 			Parent = sidebar
 		})
 
-		-- Title Container inside Sidebar
+		-- Title Container inside Sidebar - spans from top to where tabs begin
 		local titleContainer = Utilities.CreateInstance("Frame", {
 			Name = "TitleContainer",
-			Size = UDim2.new(1, 0, 0, 45),
+			Size = UDim2.new(1, 0, 0, 50),
 			Position = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
 			ZIndex = 5,
@@ -117,15 +117,15 @@ return function(Library, TabComponent)
 			Parent = titleContainer
 		})
 
-		-- Sidebar content
+		-- Sidebar content - starts right below title
 		local tabContainer = Utilities.CreateInstance("ScrollingFrame", {
 			Name = "TabContainer",
-			Size = UDim2.new(1, -10, 1, -55), -- Adjusted size
-			Position = UDim2.fromOffset(5, 50), -- Pushed down slightly
+			Size = UDim2.new(1, 0, 1, -50),
+			Position = UDim2.fromOffset(0, 50),
 			BackgroundTransparency = 1,
 			ScrollBarThickness = 0,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
-			ClipsDescendants = true, -- Ensure clipping
+			ClipsDescendants = true,
 			Parent = sidebar
 		})
 
@@ -144,8 +144,8 @@ return function(Library, TabComponent)
 		})
 
 		Utilities.CreateInstance("UIPadding", {
-			PaddingTop = UDim.new(0, 5),
-			PaddingBottom = UDim.new(0, 5),
+			PaddingTop = UDim.new(0, 4),
+			PaddingBottom = UDim.new(0, 4),
 			Parent = tabList
 		})
 		

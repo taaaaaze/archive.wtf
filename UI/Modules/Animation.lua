@@ -21,7 +21,7 @@ return function(Signal, Environment)
 	local _connection = nil
 	local _count = 0
 
-	local EPSILON = 0.001
+	local EPSILON = 0.01 -- Larger epsilon = faster settling, less wasted frames
 
 	local Easing = {}
 	Animation.Easing = Easing
@@ -153,8 +153,8 @@ return function(Signal, Environment)
 		if not RunService then
 			return
 		end
-		_connection = RunService.RenderStepped:Connect(function(dt)
-			dt = clamp(dt, 0, 1/30) -- Clamp dt to prevent physics explosions
+		_connection = RunService.Heartbeat:Connect(function(dt)
+			dt = clamp(dt, 0.001, 0.05) -- Clamp dt: floor prevents div-by-zero, ceiling prevents physics explosions
 			if _count == 0 then
 				if _connection then
 					_connection:Disconnect()
@@ -396,8 +396,8 @@ return function(Signal, Environment)
 
 	function Animation.Spring(object, properties, damping, stiffness)
 		Animation.CancelObject(object)
-		damping = damping or 20
-		stiffness = stiffness or 200
+		damping = damping or 26
+		stiffness = stiffness or 300
 
 		local springProps = {}
 		for propName, target in properties do
