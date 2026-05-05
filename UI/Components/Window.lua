@@ -104,15 +104,15 @@ return function(Library, TabComponent)
 
 		local titleLabel = Utilities.CreateInstance("TextLabel", {
 			Name = "Title",
-			Size = UDim2.new(1, -20, 1, 0),
-			Position = UDim2.fromOffset(15, 0),
+			Size = UDim2.fromScale(1, 1),
+			Position = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
 			Text = self.Title,
 			RichText = true,
 			TextColor3 = Theme.GetColor("Text"),
 			Font = Theme.GetFont("Bold"),
 			TextSize = Theme.GetTextSize("Header"),
-			TextXAlignment = Enum.TextXAlignment.Left,
+			TextXAlignment = Enum.TextXAlignment.Center,
 			Parent = titleContainer
 		})
 
@@ -190,8 +190,10 @@ return function(Library, TabComponent)
 		titleContainer.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				self.IsDragging = true
-				dragStartPos = mainFrame.Position
-				dragStartInput = Vector2.new(input.Position.X, input.Position.Y)
+				
+				local mousePos = Vector2.new(input.Position.X, input.Position.Y)
+				local framePos = mainFrame.AbsolutePosition
+				self.DragOffset = mousePos - framePos
 			end
 		end)
 
@@ -202,18 +204,11 @@ return function(Library, TabComponent)
 		end)
 
 		InputHandler.OnMouseMoved:Connect(function(pos)
-			if self.IsDragging and dragStartInput then
-				local delta = pos - dragStartInput
-				local newTarget = UDim2.new(
-					dragStartPos.X.Scale, 
-					dragStartPos.X.Offset + delta.X,
-					dragStartPos.Y.Scale, 
-					dragStartPos.Y.Offset + delta.Y
+			if self.IsDragging then
+				mainFrame.Position = UDim2.fromOffset(
+					pos.X - self.DragOffset.X + (mainFrame.Size.X.Offset * mainFrame.AnchorPoint.X),
+					pos.Y - self.DragOffset.Y + (mainFrame.Size.Y.Offset * mainFrame.AnchorPoint.Y)
 				)
-				
-				Animation.Spring(mainFrame, {
-					Position = newTarget
-				}, 15, 120)
 			end
 		end)
 	end

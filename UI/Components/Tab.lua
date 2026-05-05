@@ -182,14 +182,14 @@ return function(Library)
 		local tabList = self.Window.Elements.TabList
 		
 		task.spawn(function()
-			-- Yield slightly to allow UIListLayout to position elements if this is the first frame
-			task.wait()
+			-- Ensure positions are current
 			local targetY = button.AbsolutePosition.Y - tabList.AbsolutePosition.Y
+			
 			if activeBg.BackgroundTransparency == 1 then
 				activeBg.Position = UDim2.fromOffset(0, targetY)
-				Animation.Tween(activeBg, { BackgroundTransparency = 0 }, 0.2)
+				Animation.Tween(activeBg, { BackgroundTransparency = 0 }, 0.1)
 			else
-				Animation.Spring(activeBg, { Position = UDim2.fromOffset(0, targetY) }, 15, 120)
+				Animation.Tween(activeBg, { Position = UDim2.fromOffset(0, targetY) }, 0.15, Animation.Easing.Linear)
 			end
 		end)
 	end
