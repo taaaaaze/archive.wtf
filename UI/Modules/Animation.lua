@@ -238,6 +238,33 @@ return function(Signal, Environment)
 							or abs(propData.VelocityY) > EPSILON or abs(yDisp) > EPSILON then
 							allSettled = false
 						end
+					elseif propData.ValueType == "UDim2" then
+						local sxDisp = propData.PositionSX - propData.TargetSX
+						local oxDisp = propData.PositionOX - propData.TargetOX
+						local syDisp = propData.PositionSY - propData.TargetSY
+						local oyDisp = propData.PositionOY - propData.TargetOY
+
+						propData.VelocitySX += (-spring.Stiffness * sxDisp - spring.Damping * propData.VelocitySX) * dt
+						propData.VelocityOX += (-spring.Stiffness * oxDisp - spring.Damping * propData.VelocityOX) * dt
+						propData.VelocitySY += (-spring.Stiffness * syDisp - spring.Damping * propData.VelocitySY) * dt
+						propData.VelocityOY += (-spring.Stiffness * oyDisp - spring.Damping * propData.VelocityOY) * dt
+
+						propData.PositionSX += propData.VelocitySX * dt
+						propData.PositionOX += propData.VelocityOX * dt
+						propData.PositionSY += propData.VelocitySY * dt
+						propData.PositionOY += propData.VelocityOY * dt
+
+						spring.Object[propName] = UDim2.new(
+							propData.PositionSX, propData.PositionOX,
+							propData.PositionSY, propData.PositionOY
+						)
+
+						if abs(propData.VelocitySX) > EPSILON or abs(sxDisp) > EPSILON
+							or abs(propData.VelocityOX) > EPSILON or abs(oxDisp) > EPSILON
+							or abs(propData.VelocitySY) > EPSILON or abs(syDisp) > EPSILON
+							or abs(propData.VelocityOY) > EPSILON or abs(oyDisp) > EPSILON then
+							allSettled = false
+						end
 					end
 				end
 
@@ -253,6 +280,8 @@ return function(Signal, Environment)
 							)
 						elseif propData.ValueType == "Vector2" then
 							spring.Object[propName] = Vector2.new(propData.TargetX, propData.TargetY)
+						elseif propData.ValueType == "UDim2" then
+							spring.Object[propName] = UDim2.new(propData.TargetSX, propData.TargetOX, propData.TargetSY, propData.TargetOY)
 						end
 					end
 					_activeSprings[handle] = nil
@@ -314,6 +343,11 @@ return function(Signal, Environment)
 				elseif propData.ValueType == "Vector2" then
 					propData.TargetX = target.X
 					propData.TargetY = target.Y
+				elseif propData.ValueType == "UDim2" then
+					propData.TargetSX = target.X.Scale
+					propData.TargetOX = target.X.Offset
+					propData.TargetSY = target.Y.Scale
+					propData.TargetOY = target.Y.Offset
 				end
 			end
 		end
@@ -386,6 +420,15 @@ return function(Signal, Environment)
 					PositionX = current.X, PositionY = current.Y,
 					TargetX = target.X, TargetY = target.Y,
 					VelocityX = 0, VelocityY = 0,
+				}
+			elseif valueType == "UDim2" then
+				springProps[propName] = {
+					ValueType = "UDim2",
+					PositionSX = current.X.Scale, PositionOX = current.X.Offset,
+					PositionSY = current.Y.Scale, PositionOY = current.Y.Offset,
+					TargetSX = target.X.Scale, TargetOX = target.X.Offset,
+					TargetSY = target.Y.Scale, TargetOY = target.Y.Offset,
+					VelocitySX = 0, VelocityOX = 0, VelocitySY = 0, VelocityOY = 0,
 				}
 			end
 		end

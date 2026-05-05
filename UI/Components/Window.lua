@@ -77,36 +77,6 @@ return function(Library, TabComponent)
 			Parent = mainFrame
 		})
 
-		-- Topbar for dragging
-		local topBar = Utilities.CreateInstance("Frame", {
-			Name = "TopBar",
-			Size = UDim2.new(1, -165, 0, 40),
-			Position = UDim2.fromOffset(160, 5),
-			BackgroundColor3 = Theme.GetColor("Surface"),
-			BackgroundTransparency = 0.5,
-			BorderSizePixel = 0,
-			Parent = mainFrame
-		})
-
-		Utilities.CreateInstance("UICorner", {
-			CornerRadius = UDim.new(0, Theme.GetRounding("Medium")),
-			Parent = topBar
-		})
-
-		local titleLabel = Utilities.CreateInstance("TextLabel", {
-			Name = "Title",
-			Size = UDim2.new(1, -20, 1, 0),
-			Position = UDim2.fromOffset(15, 0),
-			BackgroundTransparency = 1,
-			Text = self.Title,
-			RichText = true,
-			TextColor3 = Theme.GetColor("Text"),
-			Font = Theme.GetFont("Bold"),
-			TextSize = Theme.GetTextSize("Header"),
-			TextXAlignment = Enum.TextXAlignment.Left,
-			Parent = topBar
-		})
-
 		-- Sidebar
 		local sidebar = Utilities.CreateInstance("Frame", {
 			Name = "Sidebar",
@@ -123,11 +93,34 @@ return function(Library, TabComponent)
 			Parent = sidebar
 		})
 
+		-- Title Container inside Sidebar
+		local titleContainer = Utilities.CreateInstance("Frame", {
+			Name = "TitleContainer",
+			Size = UDim2.new(1, 0, 0, 40),
+			Position = UDim2.fromOffset(0, 0),
+			BackgroundTransparency = 1,
+			Parent = sidebar
+		})
+
+		local titleLabel = Utilities.CreateInstance("TextLabel", {
+			Name = "Title",
+			Size = UDim2.new(1, -20, 1, 0),
+			Position = UDim2.fromOffset(15, 0),
+			BackgroundTransparency = 1,
+			Text = self.Title,
+			RichText = true,
+			TextColor3 = Theme.GetColor("Text"),
+			Font = Theme.GetFont("Bold"),
+			TextSize = Theme.GetTextSize("Header"),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Parent = titleContainer
+		})
+
 		-- Sidebar content
 		local tabContainer = Utilities.CreateInstance("ScrollingFrame", {
 			Name = "TabContainer",
-			Size = UDim2.new(1, -10, 1, -10),
-			Position = UDim2.fromOffset(5, 5),
+			Size = UDim2.new(1, -10, 1, -50),
+			Position = UDim2.fromOffset(5, 45),
 			BackgroundTransparency = 1,
 			ScrollBarThickness = 0,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -166,15 +159,15 @@ return function(Library, TabComponent)
 		-- Content Area
 		local contentArea = Utilities.CreateInstance("Frame", {
 			Name = "ContentArea",
-			Size = UDim2.new(1, -165, 1, -55),
-			Position = UDim2.fromOffset(160, 50),
+			Size = UDim2.new(1, -165, 1, -10),
+			Position = UDim2.fromOffset(160, 5),
 			BackgroundTransparency = 1,
 			Parent = mainFrame
 		})
 
 		self.Elements = {
 			MainFrame = mainFrame,
-			TopBar = topBar,
+			TitleContainer = titleContainer,
 			Sidebar = sidebar,
 			TabContainer = tabContainer,
 			TabList = tabList,
@@ -189,12 +182,12 @@ return function(Library, TabComponent)
 	function Window:SetupDragging()
 		local InputHandler = Library.Input
 		local mainFrame = self.Elements.MainFrame
-		local topBar = self.Elements.TopBar
+		local titleContainer = self.Elements.TitleContainer
 
 		local dragStartPos = nil
 		local dragStartInput = nil
 
-		topBar.InputBegan:Connect(function(input)
+		titleContainer.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				self.IsDragging = true
 				dragStartPos = mainFrame.Position
@@ -202,7 +195,7 @@ return function(Library, TabComponent)
 			end
 		end)
 
-		topBar.InputEnded:Connect(function(input)
+		titleContainer.InputEnded:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				self.IsDragging = false
 			end
