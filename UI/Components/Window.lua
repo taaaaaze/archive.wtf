@@ -129,7 +129,8 @@ return function(Library, TabComponent)
 
 		local tabList = Utilities.CreateInstance("Frame", {
 			Name = "TabList",
-			Size = UDim2.fromScale(1, 1),
+			Size = UDim2.new(1, -10, 1, 0),
+			Position = UDim2.fromOffset(5, 0),
 			BackgroundTransparency = 1,
 			Parent = tabContainer
 		})
@@ -142,8 +143,8 @@ return function(Library, TabComponent)
 		
 		local activeTabBackground = Utilities.CreateInstance("Frame", {
 			Name = "ActiveTabBackground",
-			Size = UDim2.new(1, 0, 0, 32),
-			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(1, -10, 0, 32),
+			Position = UDim2.fromOffset(5, 0),
 			BackgroundColor3 = Theme.GetColor("SurfaceActive"),
 			BackgroundTransparency = 1, -- Start transparent until a tab is selected
 			BorderSizePixel = 0,
